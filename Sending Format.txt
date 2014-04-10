@@ -1,0 +1,5 @@
+1) TPIA0  -  (T)elling (P)arkinglot parked(I)n at (A) (0) .
+2) TPOA0  -  (T)elling (P)arkinglot parked(O)ut at (A) (0) .
+
+3) RPS  -  (R)equest (P)arkinglot (S)tatus
+           output - A[8] B[8] C[8] ...H[8] getEmptyNumber() getCarsInTheParkingLot()    //all separated by space
