@@ -17,21 +17,14 @@ import javax.imageio.ImageIO;
  */
 public class CarPark_AdminViewer implements ActionListener{
 
-       private static final String serverName = "127.0.0.1"; //host server ip
-       private static final int port = 63400;                //host server to connect port 
-       private static final int appX=1000; // width of this app
-       private static final int appY=700;  //height of this app
-       private static final JButton[] blockA = new JButton[8];
-       private static final JButton[] blockB = new JButton[8];
-       private static final JButton[] blockC = new JButton[8];
-       private static final JButton[] blockD = new JButton[8];
-       private static final JButton[] blockE = new JButton[8];
-       private static final JButton[] blockF = new JButton[8];
-       private static final JButton[] blockG = new JButton[8];
-       private static final JButton[] blockH = new JButton[8];
-       private static final JFrame frame = new JFrame("Lapsap Mall Level B1");
+       private static final String serverName = ConnectDB.serverName; //host server ip
+       private static final int port = ConnectDB.port;                //host server to connect port 
+       private static final int appX= ConnectDB.appX; // width of this app
+       private static final int appY= ConnectDB.appY;  //height of this app
+       private static final JButton[] blockA = new JButton[64];
+       private static final JFrame frame = new JFrame("Lapsap Mall Car Park Level A");
        public static JLabel emptySpaceLabel = new JLabel(Integer.toString(CarPark_Live.getEmptyNumber())); //empty parking lot, default is 64 for this layout
-       public static JLabel carsInTheParkingLot = new JLabel(Integer.toString(CarPark_Sql.getCarsInTheParkingLot())); //how many cars in the parking lot,already parked or still finding parking. 
+       public static JLabel carsInTheParkingLot = new JLabel("0"); //how many cars in the parking lot,already parked or still finding parking. 
        private static Timer timer = new Timer();  //request an update every few second
                
       private JPanel createContentPane ()  // create the GUI
@@ -52,7 +45,7 @@ public class CarPark_AdminViewer implements ActionListener{
         label00.setSize(200,30);
         panel.add(label00);
         carsInTheParkingLot.setLocation(440,0);
-        carsInTheParkingLot.setSize(30,30);
+        carsInTheParkingLot.setSize(230,30);
         panel.add(carsInTheParkingLot);
         JLabel label0 = new JLabel("Parking Spaces Avialible : ");
         label0.setLocation(0,0);
@@ -88,6 +81,7 @@ public class CarPark_AdminViewer implements ActionListener{
         panel.add(button2); 
         
         
+          //make the buttons GUI
         for(int i=0;i<8;i++)
         {
                 blockA[i]=new JButton("A"+i);
@@ -95,79 +89,77 @@ public class CarPark_AdminViewer implements ActionListener{
                 blockA[i].setSize(110,50);
                 blockA[i].setName("A"+i);
                 blockA[i].setBackground(Color.green);
+                blockA[i].addActionListener(this);
                 blockA[i].setEnabled(false);
                 panel.add(blockA[i]);
         }
-        for(int i=0;i<8;i++)
-        {
-                blockB[i]=new JButton("B"+i);
-                blockB[i].setLocation(100+(50*i),40);
-                blockB[i].setSize(50,110);
-                blockB[i].setName("B"+i);
-                blockB[i].setBackground(Color.green);
-                blockB[i].setEnabled(false);
-                panel.add(blockB[i]);
-        }
-        for(int i=0;i<8;i++)
-        {
-                blockC[i]=new JButton("C"+i);
-                blockC[i].setLocation(500+(50*i),40);
-                blockC[i].setSize(50,110);
-                blockC[i].setName("C"+i);
-                blockC[i].setBackground(Color.green);
-                blockC[i].setEnabled(false);
-                panel.add(blockC[i]);
-        }
-        for(int i=0;i<8;i++)
-        {
-                blockD[i]=new JButton("D"+i);
-                blockD[i].setLocation(appX-110,550-(50*i));
-                blockD[i].setSize(110,50);
-                blockD[i].setName("D"+i);
-                blockD[i].setBackground(Color.green);
-                blockD[i].setEnabled(false);
-                panel.add(blockD[i]);
-        }
-        for(int i=0;i<8;i++)
-        {
-                blockE[i]=new JButton("E"+i);
-                blockE[i].setLocation(appX-320,550-(50*i));
-                blockE[i].setSize(110,50);
-                blockE[i].setName("E"+i);
-                blockE[i].setBackground(Color.green);
-                blockE[i].setEnabled(false);
-                panel.add(blockE[i]);
-        }
          for(int i=0;i<8;i++)
         {
-                blockF[i]=new JButton("F"+i);
-                blockF[i].setLocation(appX-430,550-(50*i));
-                blockF[i].setSize(110,50);
-                blockF[i].setName("F"+i);
-                blockF[i].setBackground(Color.green);
-                blockF[i].setEnabled(false);
-                panel.add(blockF[i]);
+                blockA[i+8]=new JButton("A"+(i+8));
+                blockA[i+8].setLocation(appX-750,550-(50*i));
+                blockA[i+8].setSize(110,50);
+                blockA[i+8].setName("A"+(i+8));
+                blockA[i+8].setBackground(Color.green);
+                blockA[i+8].addActionListener(this);
+                blockA[i+8].setEnabled(false);
+                panel.add(blockA[i+8]);
         } 
+         for(int i=0;i<8;i++)
+        {
+                blockA[i+16]=new JButton("A"+(i+16));
+                blockA[i+16].setLocation(appX-640,550-(50*i));
+                blockA[i+16].setSize(110,50);
+                blockA[i+16].setName("A"+(i+16));
+                blockA[i+16].setBackground(Color.green);
+                blockA[i+16].addActionListener(this);
+                blockA[i+16].setEnabled(false);
+                panel.add(blockA[i+16]);
+        }
           for(int i=0;i<8;i++)
         {
-                blockG[i]=new JButton("G"+i);
-                blockG[i].setLocation(appX-640,550-(50*i));
-                blockG[i].setSize(110,50);
-                blockG[i].setName("G"+i);
-                blockG[i].setBackground(Color.green);
-                blockG[i].setEnabled(false);
-                panel.add(blockG[i]);
+                blockA[i+24]=new JButton("A"+(i+24));
+                blockA[i+24].setLocation(appX-430,550-(50*i));
+                blockA[i+24].setSize(110,50);
+                blockA[i+24].setName("A"+(i+24));
+                blockA[i+24].setBackground(Color.green);
+                blockA[i+24].addActionListener(this);
+                blockA[i+24].setEnabled(false);
+                panel.add(blockA[i+24]);
         } 
+        for(int i=0;i<8;i++)
+        {
+                blockA[i+32]=new JButton("A"+(i+32));
+                blockA[i+32].setLocation(appX-320,550-(50*i));
+                blockA[i+32].setSize(110,50);
+                blockA[i+32].setName("A"+(i+32));
+                blockA[i+32].setBackground(Color.green);
+                blockA[i+32].addActionListener(this);
+                blockA[i+32].setEnabled(false);
+                panel.add(blockA[i+32]);
+        }  
            for(int i=0;i<8;i++)
         {
-                blockH[i]=new JButton("H"+i);
-                blockH[i].setLocation(appX-750,550-(50*i));
-                blockH[i].setSize(110,50);
-                blockH[i].setName("H"+i);
-                blockH[i].setBackground(Color.green);
-                blockH[i].setEnabled(false);
-                panel.add(blockH[i]);
-        } 
+                blockA[i+40]=new JButton("A"+(i+40));
+                blockA[i+40].setLocation(appX-110,550-(50*i));
+                blockA[i+40].setSize(110,50);
+                blockA[i+40].setName("A"+(i+40));
+                blockA[i+40].setBackground(Color.green);
+                blockA[i+40].addActionListener(this);
+                blockA[i+40].setEnabled(false);
+                panel.add(blockA[i+40]);
+        }
+        for(int i=0;i<16;i++)
+        {
+                blockA[i+48]=new JButton("<html>A<br>"+(i+48)+"</html>");
+                blockA[i+48].setLocation(100+(50*i),40);
+                blockA[i+48].setSize(50,110);
+                blockA[i+48].setName("A"+(i+48));
+                blockA[i+48].setBackground(Color.green);
+                blockA[i+48].addActionListener(this);
+                blockA[i+48].setEnabled(false);
+                panel.add(blockA[i+48]);
+        }
+       //
     
         
  
@@ -219,35 +211,17 @@ public class CarPark_AdminViewer implements ActionListener{
      private static void processRequest(String[] input)
      {
          String[] input0 = input[0].split("");  //split it into 8 bits
-         int[] statusA = new int[8];
-         for(int i=0;i<8;i++)   statusA[i]=Integer.parseInt(input0[i+1]);
-         String[] input1 = input[1].split("");
-         int[] statusB = new int[8];
-         for(int i=0;i<8;i++)   statusB[i]=Integer.parseInt(input1[i+1]);
-         String[] input2 = input[2].split("");
-         int[] statusC = new int[8];
-         for(int i=0;i<8;i++)   statusC[i]=Integer.parseInt(input2[i+1]);
-         String[] input3 = input[3].split("");
-         int[] statusD = new int[8];
-         for(int i=0;i<8;i++)   statusD[i]=Integer.parseInt(input3[i+1]);
-         String[] input4 = input[4].split("");
-         int[] statusE = new int[8];
-         for(int i=0;i<8;i++)   statusE[i]=Integer.parseInt(input4[i+1]);
-         String[] input5 = input[5].split("");
-         int[] statusF = new int[8];
-         for(int i=0;i<8;i++)   statusF[i]=Integer.parseInt(input5[i+1]);
-         String[] input6 = input[6].split("");
-         int[] statusG = new int[8];
-         for(int i=0;i<8;i++)   statusG[i]=Integer.parseInt(input6[i+1]);
-         String[] input7 = input[7].split("");
-         int[] statusH = new int[8];
-         for(int i=0;i<8;i++)   statusH[i]=Integer.parseInt(input7[i+1]);
+         int[] statusA = new int[64];
+         for(int i=0;i<64;i++)   statusA[i]=Integer.parseInt(input0[i+1]);
+      
          
-         emptySpaceLabel.setText(input[8]);         //update the display numbers
-         carsInTheParkingLot.setText(input[9]);
+         emptySpaceLabel.setText(input[1]);         //update the display numbers
+         carsInTheParkingLot.setText("ticketing function not in use");
+         if(ConnectDB.sqlOn==true)carsInTheParkingLot.setText(input[2]);   //only if the server is online
+         
          
          //set the buttons to green or red
-         for(int i=0;i<8;i++)
+         for(int i=0;i<64;i++)
          {
              if(statusA[i]==0) 
              {  
@@ -256,71 +230,7 @@ public class CarPark_AdminViewer implements ActionListener{
                  blockA[i].setBackground(Color.red); 
              }
          } 
-         for(int i=0;i<8;i++)
-         {
-             if(statusB[i]==0) 
-             {  
-                 blockB[i].setBackground(Color.green);   
-             }else{
-                 blockB[i].setBackground(Color.red); 
-             }
-         } 
-         for(int i=0;i<8;i++)
-         {
-             if(statusC[i]==0) 
-             {  
-                 blockC[i].setBackground(Color.green);   
-             }else{
-                 blockC[i].setBackground(Color.red); 
-             }
-         } 
-         for(int i=0;i<8;i++)
-         {
-             if(statusD[i]==0) 
-             {  
-                 blockD[i].setBackground(Color.green);   
-             }else{
-                 blockD[i].setBackground(Color.red); 
-             }
-         } 
-         for(int i=0;i<8;i++)
-         {
-             if(statusE[i]==0) 
-             {  
-                 blockE[i].setBackground(Color.green);   
-             }else{
-                 blockE[i].setBackground(Color.red); 
-             }
-         } 
-         for(int i=0;i<8;i++)
-         {
-             if(statusF[i]==0) 
-             {  
-                 blockF[i].setBackground(Color.green);   
-             }else{
-                 blockF[i].setBackground(Color.red); 
-             }
-         } 
-         for(int i=0;i<8;i++)
-         {
-             if(statusG[i]==0) 
-             {  
-                 blockG[i].setBackground(Color.green);   
-             }else{
-                 blockG[i].setBackground(Color.red); 
-             }
-         } 
-         for(int i=0;i<8;i++)
-         {
-             if(statusH[i]==0) 
-             {  
-                 blockH[i].setBackground(Color.green);   
-             }else{
-                 blockH[i].setBackground(Color.red); 
-             }
-         } 
-         
-         
+    
      }
      private static void sendRequest()
     {
@@ -334,16 +244,15 @@ public class CarPark_AdminViewer implements ActionListener{
          InputStream inFromServer = client.getInputStream();
          
          DataInputStream in = new DataInputStream(inFromServer);
-         processRequest(in.readUTF().split(" ")); //Split input into 8 bytes
+         processRequest(in.readUTF().split(" ")); //Split input into 3
          client.close();
       }catch(IOException e)
       {
-         e.printStackTrace();
+        System.out.println("CarPark_AdminViewer error :"+e);
       }
     }
     
     public static void main(String[] args) {
-        // TODO code application logic here
         CarPark_AdminViewer form = new CarPark_AdminViewer();
         form.makeGUI();
         sendRequest();
@@ -352,13 +261,29 @@ public class CarPark_AdminViewer implements ActionListener{
             @Override
             public void run() {
                 sendRequest();
+                takePic();
             }
             
         },10000,10000); //10milie seconds
         
     }   
-    
-  public static BufferedImage getScreenShot(
+  private static void takePic()
+  {
+              //testing take pic
+         BufferedImage img = getScreenShot(
+                frame.getContentPane() );
+           
+              try {
+                // write the image as a PNG
+                ImageIO.write(
+                  img,
+                  "png",
+                  new File("screenshot.png"));
+              } catch(IOException errr) {
+                System.out.println(errr);
+              }
+  }
+  private static BufferedImage getScreenShot(    //for take pic
     Component component) {
 
     BufferedImage image = new BufferedImage(
@@ -366,14 +291,12 @@ public class CarPark_AdminViewer implements ActionListener{
       component.getHeight(),
       BufferedImage.TYPE_INT_RGB
       );
-    // call the Component's paint method, using
-    // the Graphics object of the image.
     component.paint( image.getGraphics() );
     return image;
   }
   
-    @Override
-    public void actionPerformed(ActionEvent e) {
+    @Override     // JMenu clicked
+    public void actionPerformed(ActionEvent e) {      
        String name = ((JComponent) e.getSource()).getName();
       int updateRate = Integer.parseInt(name);  //get the time rate the user clicked
        
@@ -384,21 +307,7 @@ public class CarPark_AdminViewer implements ActionListener{
             public void run() {
                 sendRequest();  //send request to server
             }           
-        },updateRate,updateRate);
+        },updateRate,updateRate);   
         
-        //testing
-         BufferedImage img = getScreenShot(
-                frame.getContentPane() );
-           
-              try {
-                // write the image as a PNG
-                ImageIO.write(
-                  img,
-                  "png",
-                  new File("screenshot.png"));
-              } catch(Exception errr) {
-                System.out.println(errr);
-              }
-        
-    }
+    }       
 }

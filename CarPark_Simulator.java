@@ -15,20 +15,13 @@ import javax.swing.*;
  */
 public class CarPark_Simulator implements ActionListener{
 
-       private static final String serverName = "127.0.0.1"; //host server ip
-       private static final int port = 63400;                //host server to connect port 
-       private static final int appX=1000; // width of this app
-       private static final int appY=700;  //height of this app
-       private static final JButton[] blockA = new JButton[8];
-       private static final JButton[] blockB = new JButton[8];
-       private static final JButton[] blockC = new JButton[8];
-       private static final JButton[] blockD = new JButton[8];
-       private static final JButton[] blockE = new JButton[8];
-       private static final JButton[] blockF = new JButton[8];
-       private static final JButton[] blockG = new JButton[8];
-       private static final JButton[] blockH = new JButton[8];
-       public static JLabel emptySpaceLabel = new JLabel(Integer.toString(CarPark_Live.getEmptyNumber())); //empty parking lot, default is 64 for this layout
-       public static JLabel carsInTheParkingLot = new JLabel(Integer.toString(CarPark_Sql.getCarsInTheParkingLot())); //how many cars in the parking lot,already parked or still finding parking. 
+       private static final String serverName = ConnectDB.serverName; //host server ip
+       private static final int port = ConnectDB.port;                //host server to connect port 
+       private static final int appX=ConnectDB.appX; // width of this app
+       private static final int appY=ConnectDB.appY;  //height of this app
+       private static final JButton[] blockA = new JButton[64];
+       public static JLabel emptySpaceLabel = new JLabel("64"); //empty parking lot, default is 64 for this layout
+       public static JLabel carsInTheParkingLot = new JLabel("0"); //how many cars in the parking lot,already parked or still finding parking. 
        public String serverReplied = "";
        
       private JPanel createContentPane ()  // create the GUI
@@ -48,7 +41,7 @@ public class CarPark_Simulator implements ActionListener{
         label00.setSize(200,30);
         panel.add(label00);
         carsInTheParkingLot.setLocation(440,0);
-        carsInTheParkingLot.setSize(30,30);
+        carsInTheParkingLot.setSize(230,30);
         panel.add(carsInTheParkingLot);
         JLabel label0 = new JLabel("Parking Spaces Avialible : ");
         label0.setLocation(0,0);
@@ -75,10 +68,15 @@ public class CarPark_Simulator implements ActionListener{
         button1.setSize(110,100);
         button1.addActionListener(new ActionListener(){
            @Override
-           public void actionPerformed(ActionEvent e) {
-               CarPark_Sql.ticketIn();
-               carsInTheParkingLot.setText(Integer.toString(CarPark_Sql.getCarsInTheParkingLot()));    //needs to change later on
-           }
+           public void actionPerformed(ActionEvent e)
+           {
+               carsInTheParkingLot.setText("ticketing function not in use");
+               if(ConnectDB.sqlOn==true)//this function works only if the sql server is on
+               {
+                    CarPark_Sql.ticketIn();
+                    carsInTheParkingLot.setText(Integer.toString(CarPark_Sql.getCarsInTheParkingLot()));    //needs to change later on
+               }
+          }
     
         });
         panel.add(button1); 
@@ -106,22 +104,27 @@ public class CarPark_Simulator implements ActionListener{
         button2.setSize(110,80);
         button2.addActionListener(new ActionListener(){
            @Override
-           public void actionPerformed(ActionEvent e) {
-               if( ticketExitId.getText().equals("")==false && ticketExitId.getText().equals("Ticket ID Please")==false )
-               {
-                    CarPark_Sql.ticketOut(ticketExitId.getText());
-               }else{
-                   JOptionPane.showMessageDialog(null, "Please type your ticket number.");
-               }
-               // delete below code soon
-               carsInTheParkingLot.setText(Integer.toString(CarPark_Sql.getCarsInTheParkingLot()));
-                       
+           public void actionPerformed(ActionEvent e)
+           {
+               carsInTheParkingLot.setText("ticketing function not in use");
+                if(ConnectDB.sqlOn==true)//function will only work if sql server is on
+                {
+                        if(ticketExitId.getText().equals("")==false && ticketExitId.getText().equals("Ticket ID Please")==false )
+                        {
+                             CarPark_Sql.ticketOut(ticketExitId.getText());      //send ticket id to the method in class carpark_sql
+                             JOptionPane.showMessageDialog(null, "Done!\nYou just left.");   //inform myself tat i left lol
+                             ticketExitId.setText("Ticket ID Please");           //set the text back to the default
+                        }else{
+                            JOptionPane.showMessageDialog(null, "Please type your ticket number.");
+                        }
+                        carsInTheParkingLot.setText(Integer.toString(CarPark_Sql.getCarsInTheParkingLot())); //set the display label       
+                }
            }
     
         });
         panel.add(button2); 
         
-        //
+        //make the buttons GUI
         for(int i=0;i<8;i++)
         {
                 blockA[i]=new JButton("A"+i);
@@ -132,84 +135,73 @@ public class CarPark_Simulator implements ActionListener{
                 blockA[i].addActionListener(this);
                 panel.add(blockA[i]);
         }
-        for(int i=0;i<8;i++)
-        {
-                blockB[i]=new JButton("B"+i);
-                blockB[i].setLocation(100+(50*i),40);
-                blockB[i].setSize(50,110);
-                blockB[i].setName("B"+i);
-                blockB[i].setBackground(Color.green);
-                blockB[i].addActionListener(this);
-                panel.add(blockB[i]);
-        }
-        for(int i=0;i<8;i++)
-        {
-                blockC[i]=new JButton("C"+i);
-                blockC[i].setLocation(500+(50*i),40);
-                blockC[i].setSize(50,110);
-                blockC[i].setName("C"+i);
-                blockC[i].setBackground(Color.green);
-                blockC[i].addActionListener(this);
-                panel.add(blockC[i]);
-        }
-        for(int i=0;i<8;i++)
-        {
-                blockD[i]=new JButton("D"+i);
-                blockD[i].setLocation(appX-110,550-(50*i));
-                blockD[i].setSize(110,50);
-                blockD[i].setName("D"+i);
-                blockD[i].setBackground(Color.green);
-                blockD[i].addActionListener(this);
-                panel.add(blockD[i]);
-        }
-        for(int i=0;i<8;i++)
-        {
-                blockE[i]=new JButton("E"+i);
-                blockE[i].setLocation(appX-320,550-(50*i));
-                blockE[i].setSize(110,50);
-                blockE[i].setName("E"+i);
-                blockE[i].setBackground(Color.green);
-                blockE[i].addActionListener(this);
-                panel.add(blockE[i]);
-        }
          for(int i=0;i<8;i++)
         {
-                blockF[i]=new JButton("F"+i);
-                blockF[i].setLocation(appX-430,550-(50*i));
-                blockF[i].setSize(110,50);
-                blockF[i].setName("F"+i);
-                blockF[i].setBackground(Color.green);
-                blockF[i].addActionListener(this);
-                panel.add(blockF[i]);
+                blockA[i+8]=new JButton("A"+(i+8));
+                blockA[i+8].setLocation(appX-750,550-(50*i));
+                blockA[i+8].setSize(110,50);
+                blockA[i+8].setName("A"+(i+8));
+                blockA[i+8].setBackground(Color.green);
+                blockA[i+8].addActionListener(this);
+                panel.add(blockA[i+8]);
         } 
+         for(int i=0;i<8;i++)
+        {
+                blockA[i+16]=new JButton("A"+(i+16));
+                blockA[i+16].setLocation(appX-640,550-(50*i));
+                blockA[i+16].setSize(110,50);
+                blockA[i+16].setName("A"+(i+16));
+                blockA[i+16].setBackground(Color.green);
+                blockA[i+16].addActionListener(this);
+                panel.add(blockA[i+16]);
+        }
           for(int i=0;i<8;i++)
         {
-                blockG[i]=new JButton("G"+i);
-                blockG[i].setLocation(appX-640,550-(50*i));
-                blockG[i].setSize(110,50);
-                blockG[i].setName("G"+i);
-                blockG[i].setBackground(Color.green);
-                blockG[i].addActionListener(this);
-                panel.add(blockG[i]);
+                blockA[i+24]=new JButton("A"+(i+24));
+                blockA[i+24].setLocation(appX-430,550-(50*i));
+                blockA[i+24].setSize(110,50);
+                blockA[i+24].setName("A"+(i+24));
+                blockA[i+24].setBackground(Color.green);
+                blockA[i+24].addActionListener(this);
+                panel.add(blockA[i+24]);
         } 
+        for(int i=0;i<8;i++)
+        {
+                blockA[i+32]=new JButton("A"+(i+32));
+                blockA[i+32].setLocation(appX-320,550-(50*i));
+                blockA[i+32].setSize(110,50);
+                blockA[i+32].setName("A"+(i+32));
+                blockA[i+32].setBackground(Color.green);
+                blockA[i+32].addActionListener(this);
+                panel.add(blockA[i+32]);
+        }  
            for(int i=0;i<8;i++)
         {
-                blockH[i]=new JButton("H"+i);
-                blockH[i].setLocation(appX-750,550-(50*i));
-                blockH[i].setSize(110,50);
-                blockH[i].setName("H"+i);
-                blockH[i].setBackground(Color.green);
-                blockH[i].addActionListener(this);
-                panel.add(blockH[i]);
-        } 
-        //
-        
+                blockA[i+40]=new JButton("A"+(i+40));
+                blockA[i+40].setLocation(appX-110,550-(50*i));
+                blockA[i+40].setSize(110,50);
+                blockA[i+40].setName("A"+(i+40));
+                blockA[i+40].setBackground(Color.green);
+                blockA[i+40].addActionListener(this);
+                panel.add(blockA[i+40]);
+        }
+        for(int i=0;i<16;i++)
+        {
+                blockA[i+48]=new JButton("<html>A<br>"+(i+48)+"</html>");
+                blockA[i+48].setLocation(100+(50*i),40);
+                blockA[i+48].setSize(50,110);
+                blockA[i+48].setName("A"+(i+48));
+                blockA[i+48].setBackground(Color.green);
+                blockA[i+48].addActionListener(this);
+                panel.add(blockA[i+48]);
+        }
+       //
  
         return totalGUI;
 }
    
     private void makeGUI(){
-            JFrame frame = new JFrame("Lapsap Mall Level B1");
+            JFrame frame = new JFrame("Lapsap Mall Car Park Level A");
                    frame.setDefaultCloseOperation (JFrame.DISPOSE_ON_CLOSE);    
                    frame.setContentPane(this.createContentPane()); //create all the buttons and stuff
                    frame.setResizable(false);
@@ -244,7 +236,6 @@ public class CarPark_Simulator implements ActionListener{
         // TODO code application logic here
         CarPark_Simulator form = new CarPark_Simulator();
         form.makeGUI();
-        
         
     }
 

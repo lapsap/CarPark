@@ -3,11 +3,12 @@ package carpark;
 
 import java.net.*;
 import java.io.*;
+import java.sql.Connection;
 
 public class CarPark_MainServer extends Thread
 {
-   private ServerSocket serverSocket;
-   final static int port = 63400;   //the port i'm opening and listening to
+   private final ServerSocket serverSocket;
+   final static int port = ConnectDB.port;   //the port i'm opening and listening to
    public String toReply ="";
 
    private void handleRequest(String[] input)
@@ -17,13 +18,12 @@ public class CarPark_MainServer extends Thread
            case"P":
                if(input[3].equals("S"))
                {
-                    toReply=CarPark_Live.tellInfo();
+                    toReply=CarPark_Live.tellInfo(ConnectDB.sqlOn);
                }
                break;
                
            default:
-               System.out.println("switch case errrr(3)");
-               return;
+               System.out.println("switch case errrr(3) at main server");
        }
    }
    
@@ -32,6 +32,7 @@ public class CarPark_MainServer extends Thread
      switch(input[2])
      {  
        case "P":           //if the input is from the parking lot,info about parking space
+                if(input.length==7) input[5]+=input[6];
                    if(input[3].equals("I")==true)   //check to see if the car is going in or out
                    {
                        CarPark_Live.parkedIn(input[4], Integer.parseInt(input[5]));
@@ -44,8 +45,6 @@ public class CarPark_MainServer extends Thread
                
            default:
                System.out.println("switcch case err(2)");
-               return;
-               
      }  
    }
    
@@ -62,12 +61,13 @@ public class CarPark_MainServer extends Thread
                break;
            default:
                System.out.println("switch case error handleclientrawinput");
-               return;
        }
    }
    
    public void run()
    {
+
+        Connection connection = ConnectDB.connect();   // test to see if sql server is on9
        System.out.println("Server on,Listening on port:" + serverSocket.getLocalPort());  //tell the admin that the server is running
       while(true)
       {    
@@ -88,7 +88,7 @@ public class CarPark_MainServer extends Thread
             break;
          }catch(IOException e)
          {
-            e.printStackTrace();
+            System.out.println("mainserver err:"+e);
             break;
          }
       }
@@ -101,7 +101,7 @@ public class CarPark_MainServer extends Thread
          t.start();
       }catch(IOException e)
       {
-         e.printStackTrace();
+         System.out.println(e);
       }
    }
       public CarPark_MainServer(int port) throws IOException

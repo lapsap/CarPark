@@ -52,8 +52,10 @@ public class CarPark_Sql {
                 }
                 lapsapSet.close();
                 statement.close();
-            }catch(Exception err){ System.out.println("parkinglot getcarsinparkinglot err"); }
-                //
+            }catch (Exception err)
+             {
+                 System.out.println("MySQL database error: hehehe"+err);
+             }
         
         return count;
     }
@@ -66,7 +68,10 @@ public class CarPark_Sql {
             conn.createStatement().execute("INSERT INTO `lapsapticket` (day,date,entrytime) VALUES ('"+form.Day+"','"+form.Date+"','"+form.Time+"')"); //Insert data to table 'testone'
             conn.close();  // close mysql connection
          }
-             catch (SQLException err){System.out.println("TicketIn "+err);}
+             catch (Exception err)
+             {
+                // System.out.println("MySQL database error: "+err);
+             }
     }
     public static void ticketOut(String ID)
     {
